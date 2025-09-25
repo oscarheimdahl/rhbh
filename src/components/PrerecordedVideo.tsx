@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import video from '../assets/bh4.MOV';
+import video from '../assets/bh4.mov';
 export const PrerecordedVideo = (props: {
   onLoad: (video: HTMLVideoElement) => void;
 }) => {

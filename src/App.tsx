@@ -60,7 +60,6 @@ function App() {
   const [data, setData] = useState<SpeedData | null>(null);
 
   const handleVideoLoad = async (video: HTMLVideoElement) => {
-    return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -82,7 +81,7 @@ function App() {
       <div className='grid [&>*]:[grid-area:1/1] justify-center items-center'>
         {src === 'video' && <PrerecordedVideo onLoad={handleVideoLoad} />}
         {src === 'webcam' && <WebCam onLoad={handleVideoLoad} />}
-        <canvas ref={canvasRef} />
+        <canvas className='pointer-events-none' ref={canvasRef} />
       </div>
       {data && (
         <div className='mx-auto'>

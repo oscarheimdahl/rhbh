@@ -15,6 +15,6 @@ export function drawCircle(
   if (index !== undefined) {
     canvasCtx.fillStyle = 'black';
     canvasCtx.font = '12px Arial';
-    canvasCtx.fillText(index.toString(), x - 2, y + 5);
+    canvasCtx.fillText(index!.toString(), x - 2, y + 5);
   }
 }
