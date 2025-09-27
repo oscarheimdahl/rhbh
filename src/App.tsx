@@ -7,9 +7,7 @@ import { WebCam, type WebCamHandle } from "./components/WebCam.tsx";
 import { checkIfThrowing } from "./utils/checkIfThrowing.ts";
 import { drawPose } from "./utils/pose.ts";
 import { cn } from "./utils/utils.ts";
-
-export const WIDTH = Math.min(1200, window.innerWidth - 16 * 2);
-export const HEIGHT = (WIDTH / 4) * 3;
+import { HEIGHT, WIDTH } from "./utils/videoDimensions.ts";
 
 const vision = await FilesetResolver.forVisionTasks(
   "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
@@ -72,7 +70,11 @@ function App() {
     if (!webCamRef.current) return;
     if (!canSnapshotRef.current) return;
 
-    if (data.rightWristIsMostTopOfAllLandmarks) {
+    const shouldSnapshot = import.meta.env.PROD
+      ? data.reachback
+      : data.rightWristIsMostTopOfAllLandmarks;
+
+    if (shouldSnapshot) {
       canSnapshotRef.current = false;
       setTimeout(() => (canSnapshotRef.current = true), 3000);
       webCamRef.current.stopCapturing();

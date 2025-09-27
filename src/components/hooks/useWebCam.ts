@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { WIDTH } from "../../App";
+import { WIDTH } from "../../utils/videoDimensions";
 
 export function useWebCam(onLoad: (video: HTMLVideoElement) => void) {
   const videoRef = useRef<HTMLVideoElement | null>(null);

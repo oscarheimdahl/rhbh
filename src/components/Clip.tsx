@@ -55,6 +55,7 @@ export const Clip = (props: ClipProps) => {
         />
       )}
       <video
+        playsInline
         autoPlay
         muted
         onLoadedMetadata={handleLoadedMetadata}

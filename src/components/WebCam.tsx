@@ -1,9 +1,9 @@
 import { forwardRef, useImperativeHandle, type Ref } from "react";
 
-import { Camera, PersonStanding, SwitchCamera } from "lucide-react";
+import { Circle, PersonStanding, SwitchCamera } from "lucide-react";
 
-import { HEIGHT, WIDTH } from "../App";
 import { cn } from "../utils/utils";
+import { HEIGHT, WIDTH } from "../utils/videoDimensions";
 import type { ClipData } from "./Clip";
 import { useMediaRecorder } from "./hooks/useMediaRecorder";
 import { useWebCam } from "./hooks/useWebCam";
@@ -22,7 +22,7 @@ type WebCamProps = {
 const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
   const {
     startWebcam,
-    stopWebcam,
+    // stopWebcam,
     isActive,
     videoRef,
     stream,
@@ -38,10 +38,10 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
     stopCapturing,
   }));
 
-  const toggleWebcam = () => {
-    if (isActive) stopWebcam();
-    else startWebcam();
-  };
+  // const toggleWebcam = () => {
+  //   if (isActive) stopWebcam();
+  //   else startWebcam();
+  // };
 
   return (
     <>
@@ -55,16 +55,19 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
           muted
           playsInline
         />
+        <div className="absolute top-0 left-0 m-2 animate-pulse">
+          <RedCircle />
+        </div>
         <div className="absolute top-0 right-0 m-2 flex flex-col gap-2">
           <button
             disabled
-            className="rounded-md bg-indigo-600 p-1 text-white opacity-50"
+            className="rounded-md bg-neutral-600 p-1 text-white opacity-50"
             onClick={toggleFacingMode}
           >
             <SwitchCamera />
           </button>
           <button
-            className="rounded-md bg-indigo-600 p-1 text-white"
+            className="rounded-md bg-neutral-600 p-1 text-white"
             onClick={props.toggleDrawPoseEnabled}
           >
             <PersonStanding />
@@ -73,19 +76,24 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
       </div>
       {!isActive && (
         <button
-          onClick={toggleWebcam}
-          className="group mx-auto grid items-center gap-1 rounded-md bg-indigo-600 px-2 py-1 text-white shadow-sm active:translate-y-0.5 [&>*]:[grid-area:1/1]"
+          className="group flex items-center justify-center gap-1 rounded-lg bg-neutral-700 px-4 py-2 text-white shadow-md hover:shadow-none"
+          onClick={startWebcam}
         >
-          <Camera
-            className="mx-auto text-indigo-900 transition-colors delay-1000 duration-500 group-hover:text-white group-hover:delay-0 group-hover:duration-150"
-            size={36}
-          />
-          <span className="transition-opacity delay-1000 duration-500 group-hover:opacity-0 group-hover:delay-0 group-hover:duration-150">
-            Start Camera
-          </span>
+          <span className="text-xl">Start camera</span>
+          <RedCircle />
         </button>
       )}
     </>
+  );
+};
+
+export const RedCircle = () => {
+  return (
+    <Circle
+      className={cn(
+        "fill-red-700 stroke-red-600 transition-colors group-hover:fill-red-800 group-hover:stroke-red-500",
+      )}
+    />
   );
 };
 
