@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import video from '../assets/bh4.mov';
+import video from "../assets/bh4.mov";
+
 export const PrerecordedVideo = (props: {
   onLoad: (video: HTMLVideoElement) => void;
 }) => {
@@ -11,7 +12,7 @@ export const PrerecordedVideo = (props: {
       onLoadedData={() => {
         const video = videoRef.current;
         if (!video) return;
-        console.log('STARTING VIDEO');
+        console.log("STARTING VIDEO");
         props.onLoad(video);
       }}
       controls
@@ -21,7 +22,7 @@ export const PrerecordedVideo = (props: {
       loop
       ref={videoRef}
     >
-      <source src={video} type='video/mp4' />
+      <source src={video} type="video/mp4" />
     </video>
   );
 };

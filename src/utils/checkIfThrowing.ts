@@ -1,6 +1,7 @@
-import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
-import { LandmarkTracker } from './landmarkTracker';
-import { LANDMARKS } from './landmarks';
+import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
+
+import { LANDMARKS } from "./landmarks";
+import { LandmarkTracker } from "./landmarkTracker";
 
 const trackers = {
   nose: new LandmarkTracker(LANDMARKS.NOSE),
@@ -45,7 +46,11 @@ function isReachback(t: typeof trackers) {
   const rightShoulderRightOfLeftShoulder = rightShoulderX < leftShoulderX;
 
   const rightAnkleIsMostRightOfAllLandmarks = Object.values(t).every(
-    (tracker) => t.rightAnkle.avg.x <= tracker.avg.x
+    (tracker) => t.rightAnkle.avg.x <= tracker.avg.x,
+  );
+
+  const rightWristIsMostTopOfAllLandmarks = Object.values(t).every(
+    (tracker) => t.rightWrist.avg.y <= tracker.avg.y,
   );
 
   const reachback =
@@ -62,5 +67,6 @@ function isReachback(t: typeof trackers) {
     rightAnkleX: t.rightAnkle.avg.x,
     rightWristX: rightWristX,
     rightAnkleIsMostRightOfAllLandmarks,
+    rightWristIsMostTopOfAllLandmarks,
   };
 }

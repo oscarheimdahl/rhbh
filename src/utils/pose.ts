@@ -1,5 +1,6 @@
-import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
-import { drawCircle } from './canvasUtils';
+import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
+
+import { drawCircle } from "./canvasUtils";
 import {
   face,
   LANDMARKS,
@@ -7,7 +8,7 @@ import {
   leftHand,
   rightFoot,
   rightHand,
-} from './landmarks';
+} from "./landmarks";
 
 const ignoredLandmarks: number[] = [
   ...rightFoot,
@@ -19,7 +20,7 @@ const ignoredLandmarks: number[] = [
 
 export function drawPose(
   poseLandmarks: NormalizedLandmark[],
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
 ) {
   ctx.save();
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -30,7 +31,7 @@ export function drawPose(
     if (landmark.visibility < 0.8) continue;
     const x = landmark.x * ctx.canvas.width;
     const y = landmark.y * ctx.canvas.height;
-    drawCircle(ctx, x, y, 3, 'rgba(255,255,0)', index);
+    drawCircle(ctx, x, y, 3, "rgba(255,255,0)", index);
   }
 
   ctx.restore();
@@ -38,7 +39,7 @@ export function drawPose(
 
 function drawPoseLines(
   ctx: CanvasRenderingContext2D,
-  bodyLandmarks: NormalizedLandmark[]
+  bodyLandmarks: NormalizedLandmark[],
 ) {
   const BODY_CONNECTIONS = [
     [LANDMARKS.NOSE, LANDMARKS.RIGHT_SHOULDER],
@@ -66,7 +67,7 @@ function drawBodyLine(
   ctx: CanvasRenderingContext2D,
   bodyLandmarks: NormalizedLandmark[],
   a: number,
-  b: number
+  b: number,
 ) {
   const pointA = bodyLandmarks?.[a];
   const pointB = bodyLandmarks?.[b];
@@ -77,7 +78,7 @@ function drawBodyLine(
   const bx = pointB.x * ctx.canvas.width;
   const by = pointB.y * ctx.canvas.height;
 
-  ctx.strokeStyle = 'rgba(255,0,0,0.5)';
+  ctx.strokeStyle = "rgba(255,0,0,0.5)";
   ctx.lineWidth = 2;
 
   ctx.beginPath();

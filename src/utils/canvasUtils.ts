@@ -3,8 +3,8 @@ export function drawCircle(
   x: number,
   y: number,
   r: number,
-  color: string = 'rgba(255, 0, 0)',
-  index?: number
+  color: string = "rgba(255, 0, 0)",
+  index?: number,
 ) {
   canvasCtx.beginPath();
   canvasCtx.arc(x, y, r, 0, 2 * Math.PI);
@@ -13,8 +13,8 @@ export function drawCircle(
 
   return;
   if (index !== undefined) {
-    canvasCtx.fillStyle = 'black';
-    canvasCtx.font = '12px Arial';
+    canvasCtx.fillStyle = "black";
+    canvasCtx.font = "12px Arial";
     canvasCtx.fillText(index!.toString(), x - 2, y + 5);
   }
 }

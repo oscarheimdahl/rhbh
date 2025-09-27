@@ -1,17 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
-import { useMediaRecorder } from './useMediaRecorder';
+import { forwardRef, useImperativeHandle, type Ref } from "react";
 
-export const WebCam = (props: {
+import { Camera, SwitchCamera } from "lucide-react";
+
+import { WIDTH } from "../App";
+import { cn } from "../utils/utils";
+import { useMediaRecorder } from "./hooks/useMediaRecorder";
+import { useWebCam } from "./hooks/useWebCam";
+
+export type WebCamHandle = {
+  startCapturing: () => void;
+  stopCapturing: () => void;
+};
+
+type WebCamProps = {
   onLoad: (video: HTMLVideoElement) => void;
-}) => {
-  const { startWebcam, stopWebcam, isActive, videoRef, stream } = useWebCam(
-    props.onLoad
-  );
-  const { capturing, startCapturing, stopCapturing } = useMediaRecorder(stream);
+};
 
-  useEffect(() => {
-    if (isActive) startCapturing();
-  }, [isActive, startCapturing]);
+const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
+  const {
+    startWebcam,
+    stopWebcam,
+    isActive,
+    videoRef,
+    stream,
+    toggleFacingMode,
+  } = useWebCam(props.onLoad);
+  const { startCapturing, stopCapturing } = useMediaRecorder(stream);
+
+  useImperativeHandle(ref, () => ({
+    startCapturing,
+    stopCapturing,
+  }));
 
   const toggleWebcam = () => {
     if (isActive) stopWebcam();
@@ -19,72 +38,40 @@ export const WebCam = (props: {
   };
 
   return (
-    <div>
-      <video className='max-w-full' ref={videoRef} muted playsInline />
-      <button
-        className='p-1 rounded-md border active:opacity-50 absolute'
-        onClick={toggleWebcam}
-      >
-        {isActive ? 'Stop Camera' : 'Start Camera'}
-      </button>
-      <button
-        className='p-1 rounded-md border active:opacity-50 absolute translate-x-full'
-        onClick={capturing ? stopCapturing : startCapturing}
-      >
-        {capturing ? 'Stop Capture' : 'Start Capture'}
-      </button>
-    </div>
+    <>
+      <div className={cn("relative", !isActive && "hidden")}>
+        <video
+          width={WIDTH}
+          height={WIDTH / (4 / 3)}
+          style={{ width: WIDTH + "px" }}
+          className={cn("mx-auto rounded-md shadow-md")}
+          ref={videoRef}
+          muted
+          playsInline
+        />
+        <button
+          className="absolute top-0 right-0 m-2 rounded-md bg-indigo-600 p-1 text-white"
+          onClick={toggleFacingMode}
+        >
+          <SwitchCamera />
+        </button>
+      </div>
+      {!isActive && (
+        <button
+          onClick={toggleWebcam}
+          className="group mx-auto grid items-center gap-1 rounded-md bg-indigo-600 px-2 py-1 text-white shadow-sm active:translate-y-0.5 [&>*]:[grid-area:1/1]"
+        >
+          <Camera
+            className="mx-auto text-indigo-900 transition-colors delay-1000 duration-500 group-hover:text-white group-hover:delay-0 group-hover:duration-150"
+            size={36}
+          />
+          <span className="transition-opacity delay-1000 duration-500 group-hover:opacity-0 group-hover:delay-0 group-hover:duration-150">
+            Start Camera
+          </span>
+        </button>
+      )}
+    </>
   );
 };
 
-function useWebCam(onLoad: (video: HTMLVideoElement) => void) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isActive, setIsActive] = useState(false);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((t) => t.stop());
-      }
-    };
-  }, [stream]);
-
-  const startWebcam = async () => {
-    if (!videoRef.current || stream) return;
-
-    try {
-      const s = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: window.innerWidth },
-          height: { ideal: (window.innerHeight * 4) / 3 },
-          facingMode: 'environment',
-        },
-        audio: false,
-      });
-      setStream(s);
-      videoRef.current.srcObject = s;
-      videoRef.current.onloadeddata = () => {
-        videoRef.current?.play().catch(console.log);
-        onLoad(videoRef.current!);
-      };
-      setIsActive(true);
-    } catch (err) {
-      console.error('Failed to start webcam:', err);
-    }
-  };
-
-  const stopWebcam = () => {
-    if (stream) {
-      stream.getTracks().forEach((t) => t.stop());
-      setStream(null);
-      setIsActive(false);
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-  };
-
-  return { startWebcam, stopWebcam, isActive, videoRef, stream };
-}
+export const WebCam = forwardRef<WebCamHandle, WebCamProps>(WebCamInner);

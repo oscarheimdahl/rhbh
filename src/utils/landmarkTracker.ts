@@ -1,4 +1,4 @@
-import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
+import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
 
 type Point = { x: number; y: number };
 
@@ -25,7 +25,7 @@ export class LandmarkTracker {
 
     const sum = this.buffer.reduce(
       (acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }),
-      { x: 0, y: 0 }
+      { x: 0, y: 0 },
     );
     this.avg = {
       x: sum.x / this.buffer.length,
