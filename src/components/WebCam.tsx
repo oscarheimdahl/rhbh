@@ -1,9 +1,10 @@
 import { forwardRef, useImperativeHandle, type Ref } from "react";
 
-import { Camera, SwitchCamera } from "lucide-react";
+import { Camera, PersonStanding, SwitchCamera } from "lucide-react";
 
-import { WIDTH } from "../App";
+import { HEIGHT, WIDTH } from "../App";
 import { cn } from "../utils/utils";
+import type { ClipData } from "./Clip";
 import { useMediaRecorder } from "./hooks/useMediaRecorder";
 import { useWebCam } from "./hooks/useWebCam";
 
@@ -14,6 +15,8 @@ export type WebCamHandle = {
 
 type WebCamProps = {
   onLoad: (video: HTMLVideoElement) => void;
+  toggleDrawPoseEnabled: () => void;
+  onClipReady: (clipProps: ClipData) => void;
 };
 
 const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
@@ -25,7 +28,10 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
     stream,
     toggleFacingMode,
   } = useWebCam(props.onLoad);
-  const { startCapturing, stopCapturing } = useMediaRecorder(stream);
+  const { startCapturing, stopCapturing } = useMediaRecorder(
+    stream,
+    props.onClipReady,
+  );
 
   useImperativeHandle(ref, () => ({
     startCapturing,
@@ -42,19 +48,28 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
       <div className={cn("relative", !isActive && "hidden")}>
         <video
           width={WIDTH}
-          height={WIDTH / (4 / 3)}
-          style={{ width: WIDTH + "px" }}
+          height={HEIGHT}
+          style={{ width: WIDTH + "px", height: HEIGHT + "px" }}
           className={cn("mx-auto rounded-md shadow-md")}
           ref={videoRef}
           muted
           playsInline
         />
-        <button
-          className="absolute top-0 right-0 m-2 rounded-md bg-indigo-600 p-1 text-white"
-          onClick={toggleFacingMode}
-        >
-          <SwitchCamera />
-        </button>
+        <div className="absolute top-0 right-0 m-2 flex flex-col gap-2">
+          <button
+            disabled
+            className="rounded-md bg-indigo-600 p-1 text-white opacity-50"
+            onClick={toggleFacingMode}
+          >
+            <SwitchCamera />
+          </button>
+          <button
+            className="rounded-md bg-indigo-600 p-1 text-white"
+            onClick={props.toggleDrawPoseEnabled}
+          >
+            <PersonStanding />
+          </button>
+        </div>
       </div>
       {!isActive && (
         <button

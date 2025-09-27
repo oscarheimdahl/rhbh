@@ -35,10 +35,6 @@ export function useWebCam(onLoad: (video: HTMLVideoElement) => void) {
       videoRef.current.srcObject = s;
       videoRef.current.onloadedmetadata = () => {
         videoRef.current?.play().catch(console.log);
-        console.log(
-          videoRef.current?.videoWidth,
-          videoRef.current?.videoHeight,
-        );
         onLoad(videoRef.current!);
       };
       setIsActive(true);

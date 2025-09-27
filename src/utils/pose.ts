@@ -1,6 +1,6 @@
 import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
 
-import { drawCircle } from "./canvasUtils";
+import { drawCircle, drawStrokeCircle } from "./canvasUtils";
 import {
   face,
   LANDMARKS,
@@ -31,7 +31,10 @@ export function drawPose(
     if (landmark.visibility < 0.8) continue;
     const x = landmark.x * ctx.canvas.width;
     const y = landmark.y * ctx.canvas.height;
-    drawCircle(ctx, x, y, 3, "rgba(255,255,0)", index);
+    if (index === LANDMARKS.RIGHT_WRIST) {
+      drawStrokeCircle(ctx, x, y, 15, "rgba(255, 0, 0)"); // circle here
+    }
+    drawCircle(ctx, x, y, 5, "rgba(0, 0, 0)");
   }
 
   ctx.restore();
@@ -42,8 +45,8 @@ function drawPoseLines(
   bodyLandmarks: NormalizedLandmark[],
 ) {
   const BODY_CONNECTIONS = [
-    [LANDMARKS.NOSE, LANDMARKS.RIGHT_SHOULDER],
-    [LANDMARKS.NOSE, LANDMARKS.LEFT_SHOULDER],
+    // [LANDMARKS.NOSE, LANDMARKS.RIGHT_SHOULDER],
+    // [LANDMARKS.NOSE, LANDMARKS.LEFT_SHOULDER],
     [LANDMARKS.RIGHT_WRIST, LANDMARKS.RIGHT_ELBOW],
     [LANDMARKS.RIGHT_ELBOW, LANDMARKS.RIGHT_SHOULDER],
     [LANDMARKS.LEFT_WRIST, LANDMARKS.LEFT_ELBOW],
@@ -78,7 +81,7 @@ function drawBodyLine(
   const bx = pointB.x * ctx.canvas.width;
   const by = pointB.y * ctx.canvas.height;
 
-  ctx.strokeStyle = "rgba(255,0,0,0.5)";
+  ctx.strokeStyle = "rgba(255,255,255,0.8)";
   ctx.lineWidth = 2;
 
   ctx.beginPath();

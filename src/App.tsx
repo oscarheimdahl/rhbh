@@ -1,12 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { FilesetResolver, PoseLandmarker } from "@mediapipe/tasks-vision";
 
+import { Clip, type ClipData } from "./components/Clip.tsx";
 import { WebCam, type WebCamHandle } from "./components/WebCam.tsx";
 import { checkIfThrowing } from "./utils/checkIfThrowing.ts";
 import { drawPose } from "./utils/pose.ts";
+import { cn } from "./utils/utils.ts";
 
 export const WIDTH = Math.min(1200, window.innerWidth - 16 * 2);
+export const HEIGHT = (WIDTH / 4) * 3;
 
 const vision = await FilesetResolver.forVisionTasks(
   "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
@@ -22,6 +25,8 @@ const poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
 });
 
 type SpeedData = ReturnType<typeof checkIfThrowing>;
+
+let drawPoseEnabled = false;
 
 const processVideo = async (
   video: HTMLVideoElement,
@@ -41,7 +46,7 @@ const processVideo = async (
     const poseLandmarks = results.landmarks?.at(0);
 
     if (poseLandmarks) {
-      drawPose(poseLandmarks, ctx);
+      if (drawPoseEnabled) drawPose(poseLandmarks, ctx);
       const data = checkIfThrowing(poseLandmarks);
       cb(data);
     }
@@ -57,15 +62,16 @@ const processVideo = async (
 function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stopRef = useRef<() => void>(() => {});
-  // const [src, setSrc] = useState<'webcam' | 'video' | undefined>('webcam');
   const webCamRef = useRef<WebCamHandle>(null);
   const canSnapshotRef = useRef(true);
+  const [drawPoseEnabledState, setDrawPoseEnabledState] =
+    useState(drawPoseEnabled);
+  const [clip, setClip] = useState<ClipData | null>(null);
 
   const saveSnapshot = (data: SpeedData) => {
     if (!webCamRef.current) return;
     if (!canSnapshotRef.current) return;
 
-    // if (data.reachback) {
     if (data.rightWristIsMostTopOfAllLandmarks) {
       canSnapshotRef.current = false;
       setTimeout(() => (canSnapshotRef.current = true), 3000);
@@ -81,17 +87,37 @@ function App() {
     webCamRef.current?.startCapturing();
   };
 
+  const toggleDrawPoseEnabled = () => {
+    // Since we draw the pose outside of react we keep two pieces of state,
+    // one to toggle the canvas (in react) and one to toggle the drawing (outside react)
+    drawPoseEnabled = !drawPoseEnabled;
+    setDrawPoseEnabledState(drawPoseEnabled);
+  };
+
   return (
-    <div className="flex h-full flex-col justify-center">
-      <div className="grid items-center justify-center [&>*]:[grid-area:1/1]">
-        <WebCam ref={webCamRef} onLoad={handleVideoLoad} />
-        <canvas
-          style={{ width: WIDTH + "px", height: WIDTH / (4 / 3) + "px" }}
-          className="pointer-events-none"
-          ref={canvasRef}
-        />
+    <>
+      <div className="flex h-full flex-col justify-center">
+        <div className="grid items-center justify-center [&>*]:[grid-area:1/1]">
+          <WebCam
+            toggleDrawPoseEnabled={toggleDrawPoseEnabled}
+            ref={webCamRef}
+            onLoad={handleVideoLoad}
+            onClipReady={setClip}
+          />
+
+          <canvas
+            width={WIDTH}
+            height={HEIGHT}
+            className={cn(
+              "pointer-events-none z-10",
+              !drawPoseEnabledState && "hidden",
+            )}
+            ref={canvasRef}
+          />
+        </div>
       </div>
-    </div>
+      {clip && <Clip {...clip} onClose={() => setClip(null)} />}
+    </>
   );
 }
 

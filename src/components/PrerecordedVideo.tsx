@@ -12,7 +12,6 @@ export const PrerecordedVideo = (props: {
       onLoadedData={() => {
         const video = videoRef.current;
         if (!video) return;
-        console.log("STARTING VIDEO");
         props.onLoad(video);
       }}
       controls
