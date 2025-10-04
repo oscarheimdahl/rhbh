@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { WIDTH } from "../../utils/videoDimensions";
+import { HEIGHT, WIDTH } from "../../utils/videoDimensions";
 
 export function useWebCam(onLoad: (video: HTMLVideoElement) => void) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -26,7 +26,7 @@ export function useWebCam(onLoad: (video: HTMLVideoElement) => void) {
       const s = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: WIDTH },
-          aspectRatio: 4 / 3,
+          height: { ideal: HEIGHT },
           facingMode,
         },
         audio: false,

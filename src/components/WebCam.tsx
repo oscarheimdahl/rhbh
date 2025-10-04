@@ -3,7 +3,6 @@ import { forwardRef, useImperativeHandle, type Ref } from "react";
 import { Circle, PersonStanding, SwitchCamera } from "lucide-react";
 
 import { cn } from "../utils/utils";
-import { HEIGHT, WIDTH } from "../utils/videoDimensions";
 import type { ClipData } from "./Clip";
 import { useMediaRecorder } from "./hooks/useMediaRecorder";
 import { useWebCam } from "./hooks/useWebCam";
@@ -20,14 +19,8 @@ type WebCamProps = {
 };
 
 const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
-  const {
-    startWebcam,
-    // stopWebcam,
-    isActive,
-    videoRef,
-    stream,
-    toggleFacingMode,
-  } = useWebCam(props.onLoad);
+  const { startWebcam, isActive, videoRef, stream, toggleFacingMode } =
+    useWebCam(props.onLoad);
   const { startCapturing, stopCapturing } = useMediaRecorder(
     stream,
     props.onClipReady,
@@ -38,18 +31,10 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
     stopCapturing,
   }));
 
-  // const toggleWebcam = () => {
-  //   if (isActive) stopWebcam();
-  //   else startWebcam();
-  // };
-
   return (
     <>
       <div className={cn("relative", !isActive && "hidden")}>
         <video
-          width={WIDTH}
-          height={HEIGHT}
-          style={{ width: WIDTH + "px", height: HEIGHT + "px" }}
           className={cn("mx-auto rounded-md shadow-md")}
           ref={videoRef}
           muted
@@ -76,11 +61,10 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
       </div>
       {!isActive && (
         <button
-          className="group flex items-center justify-center gap-1 rounded-lg bg-neutral-700 px-4 py-2 text-white shadow-md hover:shadow-none"
+          className="group flex items-center justify-center gap-1 rounded-lg bg-neutral-600 px-4 py-2 text-white shadow-md hover:shadow-none"
           onClick={startWebcam}
         >
           <span className="text-xl">Start camera</span>
-          <RedCircle />
         </button>
       )}
     </>

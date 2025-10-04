@@ -1,6 +1,6 @@
 import { useState, type SyntheticEvent } from "react";
 
-import { Loader } from "lucide-react";
+import { Loader, X } from "lucide-react";
 
 import { cn } from "../utils/utils";
 
@@ -45,7 +45,9 @@ export const Clip = (props: ClipProps) => {
   return (
     <>
       <div
-        onClick={props.onClose}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) props.onClose();
+        }}
         className="fixed inset-0 bg-black opacity-50"
       ></div>
       {loading && (
@@ -54,19 +56,24 @@ export const Clip = (props: ClipProps) => {
           className="absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 animate-spin text-white duration-1000"
         />
       )}
-      <video
-        playsInline
-        autoPlay
-        muted
-        onLoadedMetadata={handleLoadedMetadata}
-        onTimeUpdate={handleTimeUpdate}
-        onEnded={(e) => e.currentTarget.play()}
-        src={props.url}
-        className={cn(
-          "pointer-events-none absolute top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-md",
-          loading && "opacity-0",
-        )}
-      ></video>
+      <div className="absolute top-1/2 left-1/2 size-fit -translate-x-1/2 -translate-y-1/2">
+        <video
+          playsInline
+          autoPlay
+          muted
+          onLoadedMetadata={handleLoadedMetadata}
+          onTimeUpdate={handleTimeUpdate}
+          onEnded={(e) => e.currentTarget.play()}
+          src={props.url}
+          className={cn(
+            "w-[calc(100vw-2rem)] max-w-[1000px] rounded-md",
+            loading && "opacity-0",
+          )}
+        />
+        <button className="absolute top-0 right-0 m-2" onClick={props.onClose}>
+          <X />
+        </button>
+      </div>
     </>
   );
 };

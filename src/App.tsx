@@ -62,6 +62,7 @@ function App() {
   const stopRef = useRef<() => void>(() => {});
   const webCamRef = useRef<WebCamHandle>(null);
   const canSnapshotRef = useRef(true);
+  const [canvasDim, setCanvasDim] = useState({ width: WIDTH, height: HEIGHT });
   const [drawPoseEnabledState, setDrawPoseEnabledState] =
     useState(drawPoseEnabled);
   const [clip, setClip] = useState<ClipData | null>(null);
@@ -87,6 +88,8 @@ function App() {
     stopRef.current?.();
     stopRef.current = await processVideo(video, canvas, saveSnapshot);
     webCamRef.current?.startCapturing();
+
+    setCanvasDim({ width: video.videoWidth, height: video.videoHeight });
   };
 
   const toggleDrawPoseEnabled = () => {
@@ -108,8 +111,8 @@ function App() {
           />
 
           <canvas
-            width={WIDTH}
-            height={HEIGHT}
+            width={canvasDim.width}
+            height={canvasDim.height}
             className={cn(
               "pointer-events-none z-10",
               !drawPoseEnabledState && "hidden",
