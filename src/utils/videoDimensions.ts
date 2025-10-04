@@ -1,5 +1,5 @@
 const landscapeRatio = { w: 16, h: 9 };
-const portraitRatio = { w: 9, h: 16 };
+// const portraitRatio = { w: 9, h: 16 };
 
 const maxWidth = 1200;
 const padding = 16 * 2; // left + right or top + bottom
@@ -8,7 +8,7 @@ const availableHeight = window.innerHeight - padding;
 
 // pick ratio depending on orientation
 const isPortrait = window.innerHeight > window.innerWidth;
-const { w, h } = isPortrait ? portraitRatio : landscapeRatio;
+const { w, h } = isPortrait ? landscapeRatio : landscapeRatio;
 
 // first, assume width is the limiting factor
 let width = Math.min(maxWidth, availableWidth);
@@ -20,5 +20,5 @@ if (height > availableHeight) {
   width = (height / h) * w;
 }
 
-export const WIDTH = width;
-export const HEIGHT = height;
+export const WIDTH = Math.floor(width);
+export const HEIGHT = Math.floor(height);

@@ -27,6 +27,7 @@ export function useWebCam(onLoad: (video: HTMLVideoElement) => void) {
         video: {
           width: { ideal: WIDTH },
           height: { ideal: HEIGHT },
+          aspectRatio: HEIGHT / WIDTH,
           facingMode,
         },
         audio: false,

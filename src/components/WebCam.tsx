@@ -1,8 +1,9 @@
 import { forwardRef, useImperativeHandle, type Ref } from "react";
 
-import { Circle, PersonStanding, SwitchCamera } from "lucide-react";
+import { Camera, Circle, PersonStanding, SwitchCamera } from "lucide-react";
 
 import { cn } from "../utils/utils";
+import { HEIGHT, WIDTH } from "../utils/videoDimensions";
 import type { ClipData } from "./Clip";
 import { useMediaRecorder } from "./hooks/useMediaRecorder";
 import { useWebCam } from "./hooks/useWebCam";
@@ -33,9 +34,11 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
 
   return (
     <>
-      <div className={cn("relative", !isActive && "hidden")}>
+      <div className={cn("relative mx-4", !isActive && "hidden")}>
         <video
-          className={cn("mx-auto rounded-md shadow-md")}
+          width={WIDTH}
+          height={HEIGHT}
+          className={cn("rounded-md shadow-md")}
           ref={videoRef}
           muted
           playsInline
@@ -61,10 +64,11 @@ const WebCamInner = (props: WebCamProps, ref: Ref<WebCamHandle>) => {
       </div>
       {!isActive && (
         <button
-          className="group flex items-center justify-center gap-1 rounded-lg bg-neutral-600 px-4 py-2 text-white shadow-md hover:shadow-none"
+          className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-700 px-4 py-2 text-white shadow-md hover:shadow-none"
           onClick={startWebcam}
         >
-          <span className="text-xl">Start camera</span>
+          <span className="text-xl">Start </span>
+          <Camera />
         </button>
       )}
     </>

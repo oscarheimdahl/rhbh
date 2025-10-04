@@ -66,7 +66,7 @@ export const Clip = (props: ClipProps) => {
           onEnded={(e) => e.currentTarget.play()}
           src={props.url}
           className={cn(
-            "w-[calc(100vw-2rem)] max-w-[1000px] rounded-md",
+            "max-h-[calc(100dvh-2rem)] w-dvh max-w-[calc(100dvw-2rem)] rounded-md",
             loading && "opacity-0",
           )}
         />

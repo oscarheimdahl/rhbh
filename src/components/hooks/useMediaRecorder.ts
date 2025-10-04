@@ -6,8 +6,8 @@ const mimeType = MediaRecorder.isTypeSupported("video/mp4; codecs=h264")
   ? "video/mp4; codecs=h264"
   : "video/webm; codecs=vp8";
 
-const preSnapshot = 1000;
-const postSnapshot = 2000;
+const preSnapshot = 3000;
+const postSnapshot = 3000;
 
 export function useMediaRecorder(
   stream: MediaStream | null,
